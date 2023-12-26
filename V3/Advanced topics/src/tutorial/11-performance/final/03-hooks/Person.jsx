@@ -1,4 +1,5 @@
 const Person = ({ name, id, removePerson }) => {
+  console.log('render');
   return (
     <div>
       <h4>{name}</h4>
