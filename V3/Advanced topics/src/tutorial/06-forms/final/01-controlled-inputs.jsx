@@ -15,33 +15,21 @@ const ControlledInputs = () => {
     console.log(name, email);
   };
   return (
-    <form className='form' onSubmit={handleSubmit}>
+    <form className="form" onSubmit={handleSubmit}>
       <h4>controlled inputs</h4>
-      <div className='form-row'>
-        <label htmlFor='name' className='form-label'>
+      <div className="form-row">
+        <label htmlFor="name" className="form-label">
           name
         </label>
-        <input
-          type='text'
-          className='form-input'
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          id='name'
-        />
+        <input type="text" className="form-input" value={name} onChange={(e) => setName(e.target.value)} id="name" />
       </div>
-      <div className='form-row'>
-        <label htmlFor='email' className='form-label'>
+      <div className="form-row">
+        <label htmlFor="email" className="form-label">
           Email
         </label>
-        <input
-          type='email'
-          className='form-input'
-          id='email'
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <input type="email" className="form-input" id="email" value={email} onChange={(e) => setEmail(e.target.value)} />
       </div>
-      <button type='submit' className='btn btn-block'>
+      <button type="submit" className="btn btn-block">
         submit
       </button>
     </form>
