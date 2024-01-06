@@ -1,0 +1,8 @@
+:root {
+  --primary-color: #bfbdd8;
+  --mainBorder: 1px solid red;
+}
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}

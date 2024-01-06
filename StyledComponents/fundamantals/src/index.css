@@ -1,0 +1,16 @@
+:root {
+  --primary-color: #645cff;
+  --mainBorder: 1px solid red;
+}
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.bg-grey {
+  background: grey;
+}
+
+.title {
+  color: red;
+}
