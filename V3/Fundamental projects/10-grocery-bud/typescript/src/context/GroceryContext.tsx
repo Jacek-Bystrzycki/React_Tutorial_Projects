@@ -1,6 +1,7 @@
-import { ReactElement, createContext, useReducer } from 'react';
+import { ReactElement, createContext, useMemo, useReducer } from 'react';
 import { nanoid } from 'nanoid';
-import { saveToLacal, loadFromLocal } from '../utils/utils';
+import { saveToLacal, loadFromLocal } from '../utils/utils.ts';
+import { isRequiredType, isInitStateType } from '../utils/utils.ts';
 
 export type InitState = {
   id: string;
@@ -16,13 +17,13 @@ const REDUCER_ACTION = {
   REMOVE: 'REMOVE',
   CLEAR: 'CLEAR',
   LOAD: 'LOAD',
+  UPDATE: 'UPDATE',
 };
 
-type ReducerPayloadCheckType = Pick<InitState, 'id' | 'checked'>;
-type ReducerPayloadType = string | ReducerPayloadCheckType;
+export type ReducerPayloadCheckType = Pick<InitState, 'id' | 'checked'>;
 type ReducerAction = {
   type: string;
-  payload?: ReducerPayloadType;
+  payload?: unknown;
 };
 
 const reducer = (state: InitState[], action: ReducerAction): InitState[] => {
@@ -39,13 +40,7 @@ const reducer = (state: InitState[], action: ReducerAction): InitState[] => {
       return [...state, newState];
 
     case REDUCER_ACTION.CHECK:
-      if (!action.payload) throw new Error('Payload as String is needed in the "CHECK" reducer action!');
-
-      function isRequiredType(payload: unknown): payload is ReducerPayloadCheckType {
-        if (payload !== null && typeof payload === 'object') {
-          return 'id' in payload && 'checked' in payload;
-        } else return false;
-      }
+      if (!action.payload) throw new Error('Payload is required in the "CHECK" reducer action!');
 
       if (!isRequiredType(action.payload)) throw new Error('Wrong payload data in "Check" reducer');
       const { id, checked } = action.payload;
@@ -71,6 +66,18 @@ const reducer = (state: InitState[], action: ReducerAction): InitState[] => {
       saveToLacal(filteredState);
       return [...filteredState];
 
+    case REDUCER_ACTION.UPDATE:
+      if (!action.payload) throw new Error("Payload is required in 'UPDATE' action");
+
+      if (!isInitStateType(action.payload)) throw new Error('Wrong type');
+      const newItem: InitState = action.payload;
+      const updatedState: InitState[] = state.map((item) => {
+        if (item.id === newItem.id) item = newItem;
+        return item;
+      });
+      saveToLacal(updatedState);
+      return updatedState;
+
     default:
       throw new Error('Wrong reducer action');
   }
@@ -79,37 +86,16 @@ const reducer = (state: InitState[], action: ReducerAction): InitState[] => {
 const useGroceryReducer = (initState: InitState[]) => {
   const [state, dispatch] = useReducer(reducer, initState);
 
-  const addGrocery = (value: string): void => {
-    dispatch({ type: REDUCER_ACTION.ADD, payload: value });
-  };
+  const REDUCER_ACTION_MEMO: typeof REDUCER_ACTION = useMemo(() => REDUCER_ACTION, []);
 
-  const checkGrocery = (data: ReducerPayloadCheckType): void => {
-    dispatch({ type: REDUCER_ACTION.CHECK, payload: data });
-  };
-
-  const loadGrocery = (): void => {
-    dispatch({ type: REDUCER_ACTION.LOAD });
-  };
-
-  const clearGrocery = (): void => {
-    dispatch({ type: REDUCER_ACTION.CLEAR });
-  };
-
-  const removeGrocery = (id: string): void => {
-    dispatch({ type: REDUCER_ACTION.REMOVE, payload: id });
-  };
-
-  return { state, addGrocery, checkGrocery, loadGrocery, clearGrocery, removeGrocery };
+  return { state, dispatch, REDUCER_ACTION: REDUCER_ACTION_MEMO };
 };
 
-type UseGroceryReducer = ReturnType<typeof useGroceryReducer>;
+export type UseGroceryReducer = ReturnType<typeof useGroceryReducer>;
 const initGroceryReducer: UseGroceryReducer = {
   state: initState,
-  addGrocery: () => {},
-  checkGrocery: () => {},
-  loadGrocery: () => {},
-  clearGrocery: () => {},
-  removeGrocery: () => {},
+  dispatch: () => {},
+  REDUCER_ACTION: REDUCER_ACTION,
 };
 
 export const GroceryContext = createContext<UseGroceryReducer>(initGroceryReducer);
