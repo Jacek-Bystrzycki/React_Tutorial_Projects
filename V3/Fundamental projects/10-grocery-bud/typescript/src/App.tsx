@@ -11,7 +11,7 @@ import { GlobalStyles } from './styledComponents/GlobalStyles';
 import { Wrapper } from './styledComponents/Wrapper';
 
 const App = (): ReactElement => {
-  const { state, dispatch, REDUCER_ACTION }: UseGroceryReducer = useGroceryContext();
+  const { state, loadFromDB }: UseGroceryReducer = useGroceryContext();
   const {
     edit: { item, isEdit },
   }: EditItemType = useEditContext();
@@ -34,7 +34,7 @@ const App = (): ReactElement => {
   );
 
   useEffect(() => {
-    dispatch({ type: REDUCER_ACTION.LOAD });
+    loadFromDB();
   }, []);
 
   return (

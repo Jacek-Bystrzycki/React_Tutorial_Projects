@@ -1,7 +1,9 @@
-import { ReactElement, createContext, useMemo, useReducer } from 'react';
+import { ReactElement, createContext, useMemo, useReducer, useCallback } from 'react';
 import { nanoid } from 'nanoid';
-import { saveToLacal, loadFromLocal } from '../utils/utils.ts';
-import { isRequiredType, isInitStateType } from '../utils/utils.ts';
+import { saveToLacal } from '../utils/utils';
+import { isRequiredType, isInitStateType, isInitStateArrayType } from '../utils/utils';
+import { readData } from '../axios/axios';
+import axios from 'axios';
 
 export type InitState = {
   id: string;
@@ -52,8 +54,8 @@ const reducer = (state: InitState[], action: ReducerAction): InitState[] => {
       return updateState;
 
     case REDUCER_ACTION.LOAD:
-      const loadedData: InitState[] = loadFromLocal();
-      return loadedData;
+      if (isInitStateArrayType(action.payload)) return action.payload;
+      return [];
 
     case REDUCER_ACTION.CLEAR:
       saveToLacal([]);
@@ -88,12 +90,26 @@ const useGroceryReducer = (initState: InitState[]) => {
 
   const REDUCER_ACTION_MEMO: typeof REDUCER_ACTION = useMemo(() => REDUCER_ACTION, []);
 
-  return { state, dispatch, REDUCER_ACTION: REDUCER_ACTION_MEMO };
+  const loadFromDB = useCallback(async (): Promise<void> => {
+    try {
+      const { data } = await readData.get<InitState[]>('/');
+      dispatch({ type: REDUCER_ACTION.LOAD, payload: data });
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error.message);
+        return;
+      }
+      console.log('Unexpected error');
+    }
+  }, []);
+
+  return { state, loadFromDB, dispatch, REDUCER_ACTION: REDUCER_ACTION_MEMO };
 };
 
 export type UseGroceryReducer = ReturnType<typeof useGroceryReducer>;
 const initGroceryReducer: UseGroceryReducer = {
   state: initState,
+  loadFromDB: async () => {},
   dispatch: () => {},
   REDUCER_ACTION: REDUCER_ACTION,
 };

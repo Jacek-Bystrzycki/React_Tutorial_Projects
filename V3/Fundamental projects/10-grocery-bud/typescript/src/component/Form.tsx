@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useGroceryContext } from '../hook/useGroceryContext';
 import { UseGroceryReducer } from '../context/GroceryContext';
 import { setupBorder } from '../styledComponents/Utils';
+import { BasicButton } from '../styledComponents/Buttons';
 
 const Form = () => {
   const { dispatch, REDUCER_ACTION, state }: UseGroceryReducer = useGroceryContext();
@@ -31,19 +32,13 @@ const Form = () => {
     </div>
   );
 
-  const clearButton: ReactElement = (
-    <button className="btn btn-clear" onClick={handleOnClick}>
-      clear
-    </button>
-  );
+  const clearButton: ReactElement = <BasicButton onClick={handleOnClick}>clear</BasicButton>;
 
   const form: ReactElement = (
     <form onSubmit={handleSubmit}>
       <input className="form-input" value={value} onChange={handleOnChange} />
       <div className="btn-container">
-        <button className="btn btn-submit" type="submit">
-          add
-        </button>
+        <BasicButton type="submit">add</BasicButton>
         {state.length > 0 && clearButton}
       </div>
     </form>
@@ -77,14 +72,5 @@ const Wrapper = styled.div`
     display: flex;
     justify-content: space-evenly;
     padding-block: 1.5rem;
-  }
-  .btn {
-    padding: 0.5rem;
-    width: 40%;
-    border-radius: 3px;
-  }
-  .btn:hover {
-    cursor: pointer;
-    background: var(--clr-neutral-400);
   }
 `;

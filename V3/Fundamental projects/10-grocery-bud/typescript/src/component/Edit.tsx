@@ -4,7 +4,7 @@ import { UseGroceryReducer, InitState } from '../context/GroceryContext';
 import { EditItemType } from '../context/EditItemContext';
 import { useEditContext } from '../hook/useEditItemContext';
 import styled from 'styled-components';
-import { setupBorder } from '../styledComponents/Utils';
+import { BasicButton } from '../styledComponents/Buttons';
 
 type PropType = {
   item: InitState;
@@ -32,8 +32,10 @@ const Edit = ({ item }: PropType): ReactElement => {
 
   const onSubmitHandler = (ev: FormEvent<HTMLFormElement>): void => {
     ev.preventDefault();
-    dispatch({ type: REDUCER_ACTION.UPDATE, payload: { ...item, title: editData.title, checked: editData.checked } });
-    applyItem();
+    if (editData.title) {
+      dispatch({ type: REDUCER_ACTION.UPDATE, payload: { ...item, title: editData.title, checked: editData.checked } });
+      applyItem();
+    }
   };
 
   const label: ReactElement = (
@@ -54,12 +56,8 @@ const Edit = ({ item }: PropType): ReactElement => {
         <input className="form-input" name="title" type="text" onChange={onChangeHandler} placeholder={item.title} value={editData.title} />
       </div>
       <div className="btn-container">
-        <button className="btn" type="submit">
-          accept
-        </button>
-        <button className="btn" type="button" onClick={() => applyItem()}>
-          back
-        </button>
+        <BasicButton type="submit">accept</BasicButton>
+        <BasicButton onClick={applyItem}>cancel</BasicButton>
       </div>
     </form>
   );
@@ -108,14 +106,5 @@ const Wrapper = styled.div`
     align-items: center;
     justify-content: space-evenly;
     padding-block: 1rem;
-  }
-  .btn {
-    padding: 0.5rem;
-    width: 40%;
-    border-radius: 3px;
-  }
-  .btn:hover {
-    cursor: pointer;
-    background: var(--clr-neutral-400);
   }
 `;
