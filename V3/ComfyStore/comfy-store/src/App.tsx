@@ -1,18 +1,27 @@
-import { ReactElement } from 'react';
+import { ReactElement, useEffect } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { routes } from './pages/routes';
+import { routes } from './routes/routes';
+import { loadCart } from './features/cartSlice';
+import { loadFromLocal } from './utils/localStorage';
+import { useAppDispatch } from './store';
 
 export type RouteParams = {
   id: string;
 };
-export type CustomCompProps = {
+export interface CustomCompProps {
   children?: ReactElement | ReactElement[];
-};
+}
 
 const router = createBrowserRouter(routes);
 
 const App = (): ReactElement => {
-  return <RouterProvider router={router}></RouterProvider>;
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(loadCart(loadFromLocal()));
+  }, []);
+
+  return <RouterProvider router={router} />;
 };
 
 export default App;

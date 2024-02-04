@@ -1,11 +1,15 @@
 import { ReactElement } from 'react';
 import { Outlet } from 'react-router-dom';
+import { Header, Navbaar } from '../components';
 
 const HomeLayout = (): ReactElement => {
   return (
     <>
-      <h1 className="text-4xl">Home Layout</h1>
-      <Outlet />
+      <Header />
+      <Navbaar />
+      <section className="align-element py-20">
+        <Outlet />
+      </section>
     </>
   );
 };

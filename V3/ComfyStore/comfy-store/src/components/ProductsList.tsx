@@ -1,0 +1,36 @@
+import { ReactElement } from 'react';
+import { Link } from 'react-router-dom';
+import { APIResponse } from '../types/API';
+import { useLoaderDataHook } from '../utils/useLoaderDataHook';
+import { UserRoutes } from '../types';
+import { formtPrice } from '../utils/formatPrice';
+
+const ProductsList = (): ReactElement => {
+  const { data } = useLoaderDataHook<APIResponse>();
+
+  return (
+    <div className="grid gap-y-8">
+      {data.map((product) => {
+        const { title, price, image, company } = product.attributes;
+        return (
+          <Link
+            key={product.id}
+            to={`${UserRoutes.products}/${product.id}`}
+            className="p-8 rounded-lg flex flex-col sm:flex-row gap-y-4 flex-wrap bg-base-100 shadow-xl hover:shadow-2xl duration-300 group"
+          >
+            <img src={image} alt={title} className="h-24 w-24 rounded-lg sm:h-32 sm:w-32 object-cover group-hover:scale-105 transition duration-300" />
+            <div className="ml-0 sm:ml-16">
+              <h3 className="capitalize font-medium text-lg">{title}</h3>
+              <h4 className="capitalize text-md text-neutral-content">{company}</h4>
+
+              {/* COLOR */}
+            </div>
+
+            <p className="font-medium ml-0 sm:ml-auto text-lg">{formtPrice(price)}</p>
+          </Link>
+        );
+      })}
+    </div>
+  );
+};
+export default ProductsList;
